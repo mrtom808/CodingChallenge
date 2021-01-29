@@ -1,0 +1,117 @@
+openapi: 3.0.3
+info:
+  title: PushBullet Proxy
+  description: "A proxy service for PushBullet"
+  contact:
+    email: 808131@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.0.1-SNAPSHOT
+tags:
+- name: user
+  description: Operations about user
+  externalDocs:
+    description: Find out more
+    url: http://swagger.io
+paths:
+  /users:
+    get:
+      tags:
+        - user
+      summary: Get all users
+      operationId: getAllUsers
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDetail'
+    post:
+      tags:
+      - user
+      summary: Create user
+      description: Create user functionality
+      operationId: createUser
+      requestBody:
+        description: Created user object
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+      x-codegen-request-body-name: body
+  /pushes:
+    post:
+      summary: Send notification
+      description: Create PushBullet notification
+      operationId: sendNotification
+      requestBody:
+        description: Notification message
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/Notification'
+        required: true
+      responses:
+        default:
+          description: successful operation
+          content: { }
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+        accessToken:
+          type: string
+    UserDetail:
+      type: object
+      properties:
+        creationTime:
+          type: string
+        numOfNotificationsPushed:
+          type: int
+      allOf:
+        - $ref: "#/components/schemas/User"
+
+    Notification:
+      type: object
+      properties:
+        username:
+          type: string
+        type:
+          type: string
+          enum: [Note, Link, File]
+        body:
+          type: string
+      discriminator:
+        propertyName: type
+    Note:
+      allOf:
+        - $ref: "#/components/schemas/Notification"
+        - type: object
+          properties:
+            title:
+              type: string
+    Link:
+      allOf:
+        - $ref: "#/components/schemas/Notification"
+        - type: object
+          properties:
+            title:
+              type: string
+            url:
+              type: string
