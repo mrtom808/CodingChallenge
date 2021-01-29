@@ -18,3 +18,19 @@
 ```
 ./gradlew bootRun
 ```
+
+# Using
+###Register a new user
+```
+curl --header 'Content-Type: application/json' --data-binary '{ "username": "user1", "accessToken": "o.xyz" }' --request POST  http://localhost:8080/v2/users
+```
+
+###List users
+```
+curl  http://localhost:8080/v2/users
+```
+
+###Send notification
+```
+curl --header 'Content-Type: application/json' --data-binary '{ "username": "user1", "type": "Note", "title": "Hello", "body": "world" }' --request POST  http://localhost:8080/v2/pushes
+```
