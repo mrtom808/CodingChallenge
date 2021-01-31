@@ -34,7 +34,7 @@ paths:
       requestBody:
         description: Created user object
         content:
-          '*/*':
+          application/json:
             schema:
               $ref: '#/components/schemas/User'
         required: true
@@ -54,11 +54,13 @@ paths:
       requestBody:
         description: Notification message
         content:
-          '*/*':
+          application/json:
             schema:
-              oneOf:
-              - $ref: '#/components/schemas/Note'
-              - $ref: '#/components/schemas/Link'
+              allOf:
+                - $ref: '#/components/schemas/Note'
+                - $ref: '#/components/schemas/Link'
+              discriminator:
+                propertyName: type
         required: true
       responses:
         default:
