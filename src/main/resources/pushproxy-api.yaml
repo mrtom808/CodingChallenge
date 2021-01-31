@@ -8,18 +8,13 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 0.0.1-SNAPSHOT
-tags:
-- name: user
-  description: Operations about user
-  externalDocs:
-    description: Find out more
-    url: http://swagger.io
 paths:
   /users:
     get:
       tags:
-        - user
-      summary: Get all users
+      - user
+      summary: Get all registered users
+      description: Returns all information for all users
       operationId: getAllUsers
       responses:
         200:
@@ -33,8 +28,8 @@ paths:
     post:
       tags:
       - user
-      summary: Create user
-      description: Create user functionality
+      summary: Register a new user
+      description: Register a new user with their apikey
       operationId: createUser
       requestBody:
         description: Created user object
@@ -54,14 +49,16 @@ paths:
   /pushes:
     post:
       summary: Send notification
-      description: Create PushBullet notification
+      description: Create PushBullet notification. Notifications can be a Pushbullet note or link. Pushbullet files are not supported.
       operationId: sendNotification
       requestBody:
         description: Notification message
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/Notification'
+              oneOf:
+              - $ref: '#/components/schemas/Note'
+              - $ref: '#/components/schemas/Link'
         required: true
       responses:
         default:
@@ -83,9 +80,9 @@ components:
         creationTime:
           type: string
         numOfNotificationsPushed:
-          type: int
+          type: integer
       allOf:
-        - $ref: "#/components/schemas/User"
+      - $ref: "#/components/schemas/User"
 
     Notification:
       type: object
@@ -94,24 +91,24 @@ components:
           type: string
         type:
           type: string
-          enum: [Note, Link, File]
+          enum: [Note, Link]
         body:
           type: string
       discriminator:
         propertyName: type
     Note:
       allOf:
-        - $ref: "#/components/schemas/Notification"
-        - type: object
-          properties:
-            title:
-              type: string
+      - $ref: "#/components/schemas/Notification"
+      - type: object
+        properties:
+          title:
+            type: string
     Link:
       allOf:
-        - $ref: "#/components/schemas/Notification"
-        - type: object
-          properties:
-            title:
-              type: string
-            url:
-              type: string
+      - $ref: "#/components/schemas/Notification"
+      - type: object
+        properties:
+          title:
+            type: string
+          url:
+            type: string
